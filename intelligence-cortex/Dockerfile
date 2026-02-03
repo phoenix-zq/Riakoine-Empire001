@@ -1,5 +1,5 @@
 FROM python:3.11-slim
+RUN pip install pandas numpy
 WORKDIR /app
 COPY . .
-RUN pip install pandas numpy
-CMD ["python", "-c", "print('Riakoine Cortex Active')"]
+CMD ["python", "market_mapper/market_mapper.py"]

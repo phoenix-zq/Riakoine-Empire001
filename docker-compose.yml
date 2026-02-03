@@ -36,3 +36,12 @@ services:
     volumes:
       - /tmp:/tmp
     network_mode: "host"
+
+  riakoine_poly_bridge:
+    image: python:3.11-slim
+    container_name: riakoine_poly_bridge
+    working_dir: /app
+    volumes:
+      - ./intelligence-cortex:/app
+    command: >
+      sh -c "pip install requests py-clob-client && python PolymarketBridge.py"

@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  engine-core:
+    build: 
+      context: ./core-engine
+      dockerfile: Dockerfile
+    container_name: riakoine_engine
+    network_mode: host
+    restart: always
+
+  cortex-brain:
+    build: 
+      context: ./intelligence-cortex
+      dockerfile: Dockerfile
+    container_name: riakoine_cortex
+    volumes:
+      - ./intelligence-cortex:/app
+    depends_on:
+      - engine-core
+
+  rag-memory:
+    image: ankane/pgvector:latest
+    ports:
+      - "5432:5432"

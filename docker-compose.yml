@@ -1,33 +1,19 @@
 services:
-  # Service A: The Python Brain
   riakoine_cortex:
     build: ./intelligence-cortex
     container_name: riakoine_cortex
-    depends_on:
-      - riakoine_engine
-      - rag-memory
     volumes:
       - ./intelligence-cortex:/app
 
-  # Service B: The C++ Heart (Dual-Feed)
+  riakoine_sentry:
+    image: python:3.11-slim
+    container_name: riakoine_sentry
+    working_dir: /app
+    volumes:
+      - ./intelligence-cortex:/app
+    command: python sentry_news.py
+
   riakoine_engine:
     build: ./core-engine
     container_name: riakoine_engine
-    network_mode: "host"  # Essential for low-latency UDP/ZMQ
-    restart: always
-
-  # Service C: The Vector Database (Fixed Auth)
-  rag-memory:
-    image: ankane/pgvector:latest
-    container_name: rag-memory
-    environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=riakoine_secret
-      - POSTGRES_DB=riakoine_memory
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-
-volumes:
-  postgres_data:
+    network_mode: "host"

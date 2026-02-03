@@ -1,27 +1,31 @@
 #include <iostream>
-#include <vector>
+#include <unistd.h>
 
-struct Level { double price; double vol; };
-
-class InstitutionalOBI {
+class InstitutionalFilter {
 public:
-    double get_imbalance(const std::vector<Level>& bids, const std::vector<Level>& asks) {
-        double b_vol = 0, a_vol = 0;
-        // Focus only on the 'inner' market (top 5 levels) where the real fight happens
-        for(int i=0; i<5 && i<bids.size(); ++i) b_vol += bids[i].vol;
-        for(int i=0; i<5 && i<asks.size(); ++i) a_vol += asks[i].vol;
-        return (b_vol - a_vol) / (b_vol + a_vol);
+    bool is_in_buy_zone(double price, double monthly_open) {
+        // Institutional Rule: Only long if price is below Monthly Open (Discount) 
+        // or retesting it from above.
+        return price >= monthly_open; 
     }
 };
 
 int main() {
-    std::cout << "[ENGINE] High-Frequency OBI Logic Online." << std::endl;
-    InstitutionalOBI scanner;
-    // Mock Data: Heavy Buy Side Presence
-    std::vector<Level> bids = {{65000, 45.5}, {64995, 30.0}};
-    std::vector<Level> asks = {{65005, 5.2}, {65010, 4.8}};
+    double current_price = 65900.00;
+    double monthly_open = 65800.00; // Received from StructuralMapper
     
-    double imbalance = scanner.get_imbalance(bids, asks);
-    std::cout << "[OBI] Ratio: " << imbalance << (imbalance > 0.7 ? " (STRONG LONG BIAS)" : "") << std::endl;
+    InstitutionalFilter filter;
+    std::cout << "[ENGINE] HTF Filter Active. Checking Monthly Bias..." << std::endl;
+
+    while(true) {
+        bool bias_confirmed = filter.is_in_buy_zone(current_price, monthly_open);
+        
+        if(bias_confirmed) {
+            std::cout << "[BIAS] BULLISH: Price is above Monthly Open. OBI Execution Enabled." << std::endl;
+        } else {
+            std::cout << "[BIAS] BEARISH: Price below HTF level. Blocking Long Signals." << std::endl;
+        }
+        sleep(10);
+    }
     return 0;
 }

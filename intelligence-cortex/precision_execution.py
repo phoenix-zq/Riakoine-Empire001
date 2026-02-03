@@ -1,31 +1,32 @@
 import sys
 import time
 
-class EmpireExecution:
+class EmpirePrecision:
     def __init__(self):
-        self.entry_price = 65475.0
-        self.is_trending = True # Determined by StructuralMapper
+        self.entry_price = 0
+        self.stop_loss = 0
+        self.regime = "RANGE" # Default
 
-    def manage_exit(self, current_price):
-        # 1. Decision Engine
-        if self.is_trending:
-            # Trailing Stop Logic: Follow the Trend
-            trailing_stop = current_price - 150.0 
-            print(f">> [TRAILING MODE] Stop-Loss adjusted to: {trailing_stop}")
+    def manage_trade(self, current_price, entry, mode):
+        # 1. First Target: Move to Break-Even (BE)
+        # Institutional Rule: If +10 pips, move to BE+1 to cover commissions
+        if current_price >= entry + 100 and self.stop_loss < entry:
+            self.stop_loss = entry + 10
+            print(f">> [SAFETY] Target 1 Hit. Stop moved to BREAK-EVEN.")
+
+        # 2. Hybrid Decision: Trail or Hold
+        if mode == "TREND":
+            # Trailing: Follow the 50% (CE) of the most recent FVG
+            new_stop = current_price - 150.0 
+            if new_stop > self.stop_loss:
+                self.stop_loss = new_stop
+                print(f">> [HYBRID] Trending detected. Trailing SL to: {self.stop_loss}")
         else:
-            # Fixed Stop Logic: Protection First
-            break_even = self.entry_price
-            print(f">> [SCALP MODE] Target 1 Hit. Moving Stop to Break-Even: {break_even}")
-
-        # 2. Precision Signal
-        if current_price >= self.entry_price + 300:
-            print(">> [PRECISION] Target 2 Hit. Locking in 70% Profit.")
+            print(f">> [HYBRID] Ranging detected. Holding Fixed BE to protect capital.")
         
         sys.stdout.flush()
 
 if __name__ == "__main__":
-    executor = EmpireExecution()
-    while True:
-        # Simulation of price movement
-        executor.manage_exit(65800.0)
-        time.sleep(15)
+    manager = EmpirePrecision()
+    # Simulated Trade
+    manager.manage_trade(65600, 65475, "TREND")

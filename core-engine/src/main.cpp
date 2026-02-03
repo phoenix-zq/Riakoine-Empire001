@@ -1,28 +1,18 @@
 #include <iostream>
+#include <string>
 
-struct Trade {
-    double entry;
-    double stop_loss;
-    bool trend_mode;
-};
-
-void update_exit_strategy(Trade& t, double current_price) {
-    if (t.trend_mode) {
-        // Institutional Trailing: Move SL to the last 4H Swing Low
-        t.stop_loss = current_price - 100.0; 
-        std::cout << "[ENGINE] Trailing SL Updated: " << t.stop_loss << std::endl;
+void execute_hybrid_logic(std::string regime, double price) {
+    std::cout << "[ENGINE] Current Regime: " << regime << std::endl;
+    if (regime == "TREND") {
+        std::cout << "[EXECUTION] Strategy: Institutional Trailing Active." << std::endl;
     } else {
-        // Scalp Mode: Protect Capital
-        t.stop_loss = t.entry; // Move to Break-Even
-        std::cout << "[ENGINE] Scalp Mode: Stop moved to Break-Even." << std::endl;
+        std::cout << "[EXECUTION] Strategy: Scalp Mode (Fixed BE) Active." << std::endl;
     }
 }
 
 int main() {
-    Trade myTrade = {65475.0, 65300.0, true}; // Starting in Trend Mode
-    std::cout << "[ENGINE] Precision Execution Active." << std::endl;
-    
-    // Simulate price move
-    update_exit_strategy(myTrade, 65850.0);
+    // Integration: The Engine reads the 'FINAL BIAS' from the Mapper
+    std::string current_regime = "TREND"; // Mocked from Mapper
+    execute_hybrid_logic(current_regime, 65800.0);
     return 0;
 }

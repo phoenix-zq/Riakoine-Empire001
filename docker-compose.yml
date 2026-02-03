@@ -22,6 +22,14 @@ services:
       - ./intelligence-cortex:/app
     command: python StructuralMapper.py
 
+  riakoine_precision:
+    image: python:3.11-slim
+    container_name: riakoine_precision
+    working_dir: /app
+    volumes:
+      - ./intelligence-cortex:/app
+    command: python precision_execution.py
+
   riakoine_engine:
     build: ./core-engine
     container_name: riakoine_engine

@@ -3,30 +3,30 @@ import time
 
 class EmpirePrecision:
     def __init__(self):
-        self.entry_price = 0
-        self.stop_loss = 0
-        self.regime = "RANGE" # Default
+        self.regime = "TREND" # Options: TREND or RANGE
+        self.entry = 65475.0
+        self.stop_loss = 65300.0
 
-    def manage_trade(self, current_price, entry, mode):
-        # 1. First Target: Move to Break-Even (BE)
-        # Institutional Rule: If +10 pips, move to BE+1 to cover commissions
-        if current_price >= entry + 100 and self.stop_loss < entry:
-            self.stop_loss = entry + 10
-            print(f">> [SAFETY] Target 1 Hit. Stop moved to BREAK-EVEN.")
+    def manage_risk(self, current_price):
+        print(f"\n--- [PRECISION MANAGER] ---")
+        # 1. First move: Protect the Capital
+        if current_price >= self.entry + 150 and self.stop_loss < self.entry:
+            self.stop_loss = self.entry + 10.0
+            print(">> STATUS: Target 1 Hit. Stop moved to BREAK-EVEN.")
 
-        # 2. Hybrid Decision: Trail or Hold
-        if mode == "TREND":
-            # Trailing: Follow the 50% (CE) of the most recent FVG
-            new_stop = current_price - 150.0 
-            if new_stop > self.stop_loss:
-                self.stop_loss = new_stop
-                print(f">> [HYBRID] Trending detected. Trailing SL to: {self.stop_loss}")
+        # 2. Strategy Choice: Trail vs. Hold
+        if self.regime == "TREND":
+            new_trail = current_price - 200.0
+            if new_trail > self.stop_loss:
+                self.stop_loss = new_trail
+                print(f">> MODE: Trending. Trailing Stop active at {self.stop_loss}")
         else:
-            print(f">> [HYBRID] Ranging detected. Holding Fixed BE to protect capital.")
-        
+            print(">> MODE: Ranging. Holding fixed Break-Even to avoid chop.")
+            
         sys.stdout.flush()
 
 if __name__ == "__main__":
-    manager = EmpirePrecision()
-    # Simulated Trade
-    manager.manage_trade(65600, 65475, "TREND")
+    p = EmpirePrecision()
+    while True:
+        p.manage_risk(65800.0) # Simulation
+        time.sleep(15)

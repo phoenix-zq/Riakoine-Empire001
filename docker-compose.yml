@@ -11,9 +11,20 @@ services:
     working_dir: /app
     volumes:
       - ./intelligence-cortex:/app
+      - /tmp:/tmp
     command: python sentry_news.py
+
+  riakoine_mapper:
+    image: python:3.11-slim
+    container_name: riakoine_mapper
+    working_dir: /app
+    volumes:
+      - ./intelligence-cortex:/app
+    command: python StructuralMapper.py
 
   riakoine_engine:
     build: ./core-engine
     container_name: riakoine_engine
+    volumes:
+      - /tmp:/tmp
     network_mode: "host"

@@ -1,31 +1,28 @@
 #include <iostream>
-#include <unistd.h>
 
-class InstitutionalFilter {
-public:
-    bool is_in_buy_zone(double price, double monthly_open) {
-        // Institutional Rule: Only long if price is below Monthly Open (Discount) 
-        // or retesting it from above.
-        return price >= monthly_open; 
-    }
+struct Trade {
+    double entry;
+    double stop_loss;
+    bool trend_mode;
 };
 
-int main() {
-    double current_price = 65900.00;
-    double monthly_open = 65800.00; // Received from StructuralMapper
-    
-    InstitutionalFilter filter;
-    std::cout << "[ENGINE] HTF Filter Active. Checking Monthly Bias..." << std::endl;
-
-    while(true) {
-        bool bias_confirmed = filter.is_in_buy_zone(current_price, monthly_open);
-        
-        if(bias_confirmed) {
-            std::cout << "[BIAS] BULLISH: Price is above Monthly Open. OBI Execution Enabled." << std::endl;
-        } else {
-            std::cout << "[BIAS] BEARISH: Price below HTF level. Blocking Long Signals." << std::endl;
-        }
-        sleep(10);
+void update_exit_strategy(Trade& t, double current_price) {
+    if (t.trend_mode) {
+        // Institutional Trailing: Move SL to the last 4H Swing Low
+        t.stop_loss = current_price - 100.0; 
+        std::cout << "[ENGINE] Trailing SL Updated: " << t.stop_loss << std::endl;
+    } else {
+        // Scalp Mode: Protect Capital
+        t.stop_loss = t.entry; // Move to Break-Even
+        std::cout << "[ENGINE] Scalp Mode: Stop moved to Break-Even." << std::endl;
     }
+}
+
+int main() {
+    Trade myTrade = {65475.0, 65300.0, true}; // Starting in Trend Mode
+    std::cout << "[ENGINE] Precision Execution Active." << std::endl;
+    
+    // Simulate price move
+    update_exit_strategy(myTrade, 65850.0);
     return 0;
 }

@@ -26,9 +26,21 @@ services:
     image: python:3.11-slim
     container_name: riakoine_precision
     working_dir: /app
+    env_file: .env
     volumes:
       - ./intelligence-cortex:/app
-    command: python precision_execution.py
+    command: >
+      sh -c "pip install --no-cache-dir requests py-clob-client && python precision_execution.py"
+
+  riakoine_poly_bridge:
+    image: python:3.11-slim
+    container_name: riakoine_poly_bridge
+    working_dir: /app
+    env_file: .env
+    volumes:
+      - ./intelligence-cortex:/app
+    command: >
+      sh -c "pip install --no-cache-dir requests py-clob-client && python PolymarketBridge.py"
 
   riakoine_engine:
     build: ./core-engine
@@ -36,12 +48,3 @@ services:
     volumes:
       - /tmp:/tmp
     network_mode: "host"
-
-  riakoine_poly_bridge:
-    image: python:3.11-slim
-    container_name: riakoine_poly_bridge
-    working_dir: /app
-    volumes:
-      - ./intelligence-cortex:/app
-    command: >
-      sh -c "pip install requests py-clob-client && python PolymarketBridge.py"

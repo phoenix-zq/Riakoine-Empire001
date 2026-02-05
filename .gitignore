@@ -1,6 +1,5 @@
-__pycache__/
-venv/
 .env
-build/
-*.o
+__pycache__/
+*.pyc
 .DS_Store
+riakoine.service

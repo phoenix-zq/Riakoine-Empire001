@@ -1,0 +1,8 @@
+timestamp,steps,wifi_signal_dbm,event_type,status
+2026-02-15 07:46:01,200,-60,System Active,Encrypted
+2026-02-15 07:51:13,0,-51,ELINT Scan: Active,Encrypted
+2026-02-15 07:52:13,0,-100,Flip: danger -> Hinya,Encrypted
+2026-02-15 07:56:05,0,-100,DISPATCH: non_motion to dholuo,Encrypted
+2026-02-15 07:57:46,3500,-70,WALK: Earned 3.5 Credits,Encrypted
+2026-02-15 08:04:19,500,-88,WALK: Earned 0.5 Credits,Encrypted
+2026-02-15 08:06:08,4200,-75,-1.41,36.65,Ngong Mission Prep,Encrypted
